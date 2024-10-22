@@ -28,6 +28,9 @@ class Playlist
     #[ORM\OneToMany(targetEntity: Formation::class, mappedBy: 'playlist')]
     private Collection $formations;
 
+    #[ORM\Column]
+    private ?int $nbrdeformation = null;
+
     public function __construct()
     {
         $this->formations = new ArrayCollection();
@@ -105,5 +108,17 @@ class Playlist
             }
         }
         return $categories;
+    }
+
+    public function getNbrdeformation(): ?int
+    {
+        return $this->nbrdeformation;
+    }
+
+    public function setNbrdeformation(int $nbrdeformation): static
+    {
+        $this->nbrdeformation = $nbrdeformation;
+
+        return $this;
     }
 }

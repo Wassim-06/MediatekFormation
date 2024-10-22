@@ -75,6 +75,9 @@ class PlaylistsController extends AbstractController
         if ($champ == "name") {
             $playlists = $this->playlistRepository->findAllOrderByName($ordre);
         }
+        if ($champ == "nbrdeformation") {
+            $playlists = $this->playlistRepository->findAllOrderByNbrFormation($ordre);
+        }
         $categories = $this->categorieRepository->findAll();
         return $this->render($this->lien, [
             'playlists' => $playlists,
@@ -105,7 +108,7 @@ class PlaylistsController extends AbstractController
         return $this->render("pages/playlist.html.twig", [
             'playlist' => $playlist,
             'playlistcategories' => $playlistCategories,
-            'playlistformations' => $playlistFormations
+            'playlistformations' => $playlistFormations,
         ]);
     }
 }
