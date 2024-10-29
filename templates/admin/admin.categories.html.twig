@@ -1,0 +1,42 @@
+{% extends "baseadmin.html.twig" %}
+{% block body %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th class="align-top" scope="col">
+                Catégories
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- boucle sur les categories -->
+        {% for categorie in categories %}
+        <tr class="align-middle">
+            <td>
+                <h5 class="text-info">
+                    {{ categorie.name }}
+                </h5>
+            </td>
+            <td>
+                <a href="{{ path('admin.categorie.delete', {id:categorie.id}) }}" class="btn btn-danger"
+                    onclick="return confirm('Etes vous sur de vouloir supprimer la catégoties {{ categorie.name }} ? ')">Supprimer</a>
+            </td>
+        </tr>
+        {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+<form action="{{ path('admin.categorie.add') }}" method="post">
+    <h3>Ajouter une catégorie</h3>
+    <div class="mb-3">
+        <label for="name" class="form-label">Nom de la catégorie</label>
+        <input type="text" name="name" class="form-control" id="name" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    {% for message in app.flashes('error1') %}
+    <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+</form>
+{% endblock %}
