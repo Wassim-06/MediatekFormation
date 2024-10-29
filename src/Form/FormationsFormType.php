@@ -5,7 +5,6 @@ namespace App\Form;
 use App\Entity\Categorie;
 use App\Entity\Formation;
 use App\Entity\Playlist;
-use phpDocumentor\Reflection\PseudoTypes\True_;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
