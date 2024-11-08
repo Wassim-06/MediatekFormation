@@ -5,7 +5,6 @@ namespace App\Tests\Repository;
 use App\Entity\Playlist;
 use App\Repository\PlaylistRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PlaylistRepositoryTest extends KernelTestCase
 {

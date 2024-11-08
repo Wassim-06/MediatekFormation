@@ -5,90 +5,137 @@ namespace App\Tests\Controller;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Classe de tests pour le contrôleur des playlists.
+ *
+ * Cette classe teste :
+ * - L'accès à la page des playlists.
+ * - La présence du contenu attendu.
+ * - Les fonctionnalités de tri par nom ou par nombre de formations.
+ * - Les filtres appliqués par nom ou catégorie.
+ */
 class PlaylistsControllerTest extends WebTestCase
 {
-    public function testAccesPage()
+    /**
+     * Teste si la page des playlists est accessible.
+     */
+    public function testAccesPage(): void
     {
         $client = static::createClient();
         $client->request('GET', '/playlists');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
-    public function testContenuPage()
+    /**
+     * Teste si le titre "Playlists" est présent sur la page.
+     */
+    public function testContenuPage(): void
     {
         $client = static::createClient();
         $client->request('GET', '/playlists');
         $this->assertSelectorTextContains('h1', 'Playlists');
     }
 
-    public function testLinkDESCNamePlaylists()
+    /**
+     * Teste le tri DESC sur le champ "name".
+     */
+    public function testLinkDESCNamePlaylists(): void
     {
         $client = static::createClient();
         $client->request('GET', '/playlists');
         $client->clickLink('⏷');
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+
         $uri = $client->getRequest()->server->get("REQUEST_URI");
         $this->assertEquals('/playlists/tri/name/DESC', $uri);
     }
 
-    public function testLinkASCNamePlaylists()
+    /**
+     * Teste le tri ASC sur le champ "name".
+     */
+    public function testLinkASCNamePlaylists(): void
     {
         $client = static::createClient();
         $client->request('GET', '/playlists');
         $client->clickLink('⏶');
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+
         $uri = $client->getRequest()->server->get("REQUEST_URI");
         $this->assertEquals('/playlists/tri/name/ASC', $uri);
     }
 
-    public function testLinkASCNbreFormaPlaylists()
+    /**
+     * Teste le tri ASC sur le champ "nbrdeformation".
+     */
+    public function testLinkASCNbreFormaPlaylists(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/playlists');
-        $links = $crawler->selectLink('⏶');
-        $link = $links->eq(1)->link();
+        $links = $crawler->selectLink('⏶'); // Sélectionne tous les liens "⏶"
+        $link = $links->eq(1)->link(); // Prend le deuxième lien "⏶" pour "nbrdeformation"
         $client->click($link);
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+
         $uri = $client->getRequest()->server->get("REQUEST_URI");
         $this->assertEquals('/playlists/tri/nbrdeformation/ASC', $uri);
     }
 
-    public function testLinkDESCNbreFormaPlaylists()
+    /**
+     * Teste le tri DESC sur le champ "nbrdeformation".
+     */
+    public function testLinkDESCNbreFormaPlaylists(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/playlists');
-        $links = $crawler->selectLink('⏷');
-        $link = $links->eq(1)->link();
+        $links = $crawler->selectLink('⏷'); // Sélectionne tous les liens "⏷"
+        $link = $links->eq(1)->link(); // Prend le deuxième lien "⏷" pour "nbrdeformation"
         $client->click($link);
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+
         $uri = $client->getRequest()->server->get("REQUEST_URI");
         $this->assertEquals('/playlists/tri/nbrdeformation/DESC', $uri);
     }
 
-    public function testFiltreNamePlaylists()
+    /**
+     * Teste le filtre par nom dans les playlists.
+     */
+    public function testFiltreNamePlaylists(): void
     {
         $client = static::createClient();
         $client->request('GET', '/playlists');
+
+        // Soumet le formulaire de filtre par nom avec "Test"
         $crawler = $client->submitForm('filtrer', [
             'recherche' => 'Test'
         ]);
+
+        // Vérifie que le nombre de résultats est de 1
         $this->assertCount(1, $crawler->filter('h5'));
+
+        // Vérifie que le texte "Testadd" est présent dans un élément <h5>
         $this->assertSelectorTextContains('h5', 'Testadd');
     }
 
-    public function testFiltreCategoriesPlaylist()
+    /**
+     * Teste le filtre par catégorie dans les playlists.
+     */
+    public function testFiltreCategoriesPlaylist(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/playlists');
+
+        // Sélectionne le deuxième formulaire (filtre par catégorie)
         $form = $crawler->filter('form')->eq(1)->form([
-            'recherche' => '1' // Remplir le champ 'recherche' pour le deuxième formulaire
+            'recherche' => '1' // Soumet "1" comme valeur pour la recherche
         ]);
+
+        // Soumet le formulaire
         $crawler = $client->submit($form);
+
+        // Vérifie que le nombre de résultats est de 2
         $this->assertCount(2, $crawler->filter('h5'));
+
+        // Vérifie que le texte "Eclipse et Java" est présent dans un élément <h5>
         $this->assertSelectorTextContains('h5', 'Eclipse et Java');
     }
 }

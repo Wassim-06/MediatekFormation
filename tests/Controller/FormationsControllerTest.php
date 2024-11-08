@@ -5,113 +5,146 @@ namespace App\Tests\Controller;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Classe de tests pour le contrôleur des formations.
+ *
+ * Cette classe teste les fonctionnalités suivantes :
+ * - Accès à la page des formations.
+ * - Présence du contenu attendu.
+ * - Fonctionnement des liens de tri.
+ * - Fonctionnement des filtres.
+ * - Navigation vers une formation spécifique.
+ */
 class FormationsControllerTest extends WebTestCase
 {
-    public function testAccesPage()
+    /**
+     * Teste si la page des formations est accessible.
+     */
+    public function testAccesPage(): void
     {
         $client = static::createClient();
         $client->request('GET', '/formations');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
-    public function testContenuPage()
+    /**
+     * Teste si le titre "Formations" est présent sur la page.
+     */
+    public function testContenuPage(): void
     {
         $client = static::createClient();
         $client->request('GET', '/formations');
         $this->assertSelectorTextContains('h1', 'Formations');
     }
 
-    public function testLinkDESCTitleFormations()
+    /**
+     * Teste le tri DESC sur le champ "title".
+     */
+    public function testLinkDESCTitleFormations(): void
     {
         $client = static::createClient();
         $client->request('GET', '/formations');
         $client->clickLink('⏷');
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $uri = $client->getRequest()->server->get("REQUEST_URI");
         $this->assertEquals('/formations/tri/title/DESC', $uri);
     }
 
-    public function testLinkASCTitleFormations()
+    /**
+     * Teste le tri ASC sur le champ "title".
+     */
+    public function testLinkASCTitleFormations(): void
     {
         $client = static::createClient();
         $client->request('GET', '/formations');
         $client->clickLink('⏶');
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $uri = $client->getRequest()->server->get("REQUEST_URI");
         $this->assertEquals('/formations/tri/title/ASC', $uri);
     }
 
-    public function testLinkASCPlaylistFormations()
+    /**
+     * Teste le tri ASC sur le champ "name" de la table "playlist".
+     */
+    public function testLinkASCPlaylistFormations(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/formations');
         $links = $crawler->selectLink('⏶');
         $link = $links->eq(1)->link();
         $client->click($link);
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $uri = $client->getRequest()->server->get("REQUEST_URI");
         $this->assertEquals('/formations/tri/name/ASC/playlist', $uri);
     }
 
-    public function testLinkDESCPlaylistFormations()
+    /**
+     * Teste le tri DESC sur le champ "name" de la table "playlist".
+     */
+    public function testLinkDESCPlaylistFormations(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/formations');
         $links = $crawler->selectLink('⏷');
         $link = $links->eq(1)->link();
         $client->click($link);
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $uri = $client->getRequest()->server->get("REQUEST_URI");
         $this->assertEquals('/formations/tri/name/DESC/playlist', $uri);
     }
 
-    public function testLinkDESCDateFormations()
+    /**
+     * Teste le tri DESC sur le champ "publishedAt".
+     */
+    public function testLinkDESCDateFormations(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/formations');
         $links = $crawler->selectLink('⏷');
         $link = $links->eq(2)->link();
         $client->click($link);
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $uri = $client->getRequest()->server->get("REQUEST_URI");
         $this->assertEquals('/formations/tri/publishedAt/DESC', $uri);
     }
 
-    public function testLinkASCDateFormations()
+    /**
+     * Teste le tri ASC sur le champ "publishedAt".
+     */
+    public function testLinkASCDateFormations(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/formations');
         $links = $crawler->selectLink('⏶');
         $link = $links->eq(2)->link();
         $client->click($link);
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $uri = $client->getRequest()->server->get("REQUEST_URI");
         $this->assertEquals('/formations/tri/publishedAt/ASC', $uri);
     }
 
-    public function testLinkFormation()
+    /**
+     * Teste l'accès à une formation spécifique via un lien.
+     */
+    public function testLinkFormation(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/formations');
         $links = $crawler->selectLink('formation img');
         $link = $links->eq(2)->link();
         $client->click($link);
-        $response = $client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $uri = $client->getRequest()->server->get("REQUEST_URI");
         $this->assertEquals('/formations/formation/16', $uri);
     }
 
-    public function testFiltreNameFormations()
+    /**
+     * Teste le filtre par nom dans les formations.
+     */
+    public function testFiltreNameFormations(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/formations');
+        $crawler = $client->request('GET', '/formations');
         $crawler = $client->submitForm('filtrer', [
             'recherche' => 'UML'
         ]);
@@ -119,7 +152,10 @@ class FormationsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h5', 'UML : Diagramme de classes');
     }
 
-    public function testFiltrePlaylistFormations()
+    /**
+     * Teste le filtre par nom dans les playlists associées.
+     */
+    public function testFiltrePlaylistFormations(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/formations');
@@ -131,7 +167,10 @@ class FormationsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h5', 'C# : Lier List et ListBox');
     }
 
-    public function testFiltreCategoriesFormations()
+    /**
+     * Teste le filtre par catégories associées.
+     */
+    public function testFiltreCategoriesFormations(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/formations');
