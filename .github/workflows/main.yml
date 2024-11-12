@@ -16,7 +16,7 @@ jobs:
     - name: Sync files via FTP
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
-        server: ftp://mediatekformation.go.yn.fr
+        server: mediatekformation.go.yn.fr
         username: ucjdscww
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./ # Chemin vers ton projet local.
