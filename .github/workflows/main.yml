@@ -20,4 +20,4 @@ jobs:
         username: ucjdscww
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./ # Chemin vers ton projet local.
-        server-dir: /public_html/mediatekformation  # Chemin vers ton projet sur le serveur.
+        server-dir: /public_html/mediatekformation/  # Chemin vers ton projet sur le serveur.
