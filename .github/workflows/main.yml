@@ -1,0 +1,23 @@
+name: Deploy website on push
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Sync files via FTP
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      with:
+        server: ftp://mediatekformation.go.yn.fr
+        username: ucjdscww
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./ # Chemin vers ton projet local.
+        server-dir: /public_html/mediatekformation  # Chemin vers ton projet sur le serveur.
