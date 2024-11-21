@@ -207,4 +207,17 @@ class AdminPlaylistsController extends AbstractController
             'playlist' => $playlist,
         ]);
     }
+
+    #[Route('/admin/playlists/playlist/{id}', name: 'admin.playlists.showone')]
+    public function showOne($id): Response
+    {
+        $playlist = $this->playlistRepository->find($id);
+        $playlistCategories = $this->categorieRepository->findAllForOnePlaylist($id);
+        $playlistFormations = $this->formationRepository->findAllForOnePlaylist($id);
+        return $this->render("pages/playlist.html.twig", [
+            'playlist' => $playlist,
+            'playlistcategories' => $playlistCategories,
+            'playlistformations' => $playlistFormations,
+        ]);
+    }
 }
